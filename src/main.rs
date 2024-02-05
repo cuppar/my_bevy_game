@@ -23,9 +23,9 @@ fn main() {
     App::new().add_plugins((DefaultPlugins, HelloPlugin)).run();
 }
 
-fn hello_world() {
-    println!("hello world!");
-}
+// fn hello_world() {
+//     println!("hello world!");
+// }
 
 fn add_people(mut commands: Commands) {
     commands.spawn((Person, Name("Cuppar He".to_string())));
@@ -41,11 +41,11 @@ fn greet_people(time: Res<Time>, mut timer: ResMut<GreetTimer>, query: Query<&Na
     }
 }
 
-fn update_people(mut query: Query<&mut Name, With<Person>>) {
-    for mut name in &mut query {
-        if name.0 == "Cuppar He" {
-            name.0 = "Cuppar~".to_string();
-            break;
-        }
-    }
-}
+// fn update_people(mut query: Query<&mut Name, With<Person>>) {
+//     for mut name in &mut query {
+//         if name.0 == "Cuppar He" {
+//             name.0 = "Cuppar~".to_string();
+//             break;
+//         }
+//     }
+// }
