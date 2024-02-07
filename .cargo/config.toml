@@ -21,12 +21,12 @@
 # ]
 
 
-[target.x86_64-pc-windows-msvc]
-linker = "rust-lld.exe" # Use LLD Linker
-rustflags = [
-  "-Zshare-generics=n",
-  "-Zthreads=0",        # (Nightly) Use improved multithreading with the recommended amount of threads.
-]
+# [target.x86_64-pc-windows-msvc]
+# linker = "rust-lld.exe" # Use LLD Linker
+# rustflags = [
+#   "-Zshare-generics=n",
+#   "-Zthreads=0",        # (Nightly) Use improved multithreading with the recommended amount of threads.
+# ]
 
 # Optional: Uncommenting the following improves compile times, but reduces the amount of debug info to 'line number tables only'
 # In most cases the gains are negligible, but if you are on macos and have slow compile times you should see significant gains.
