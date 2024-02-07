@@ -1,11 +1,11 @@
 use bevy::prelude::*;
 
 #[derive(Component, Debug)]
-pub struct Rotation {
+pub struct RotationVelocity {
     pub value: Vec3,
 }
 
-impl Rotation {
+impl RotationVelocity {
     pub fn new(value: Vec3) -> Self {
         Self { value }
     }
@@ -19,7 +19,7 @@ impl Plugin for RotationPlugin {
     }
 }
 
-fn update_rotation(mut query: Query<(&Rotation, &mut Transform)>, time: Res<Time>) {
+fn update_rotation(mut query: Query<(&RotationVelocity, &mut Transform)>, time: Res<Time>) {
     for (rotation, mut transform) in &mut query {
         transform.rotate_local_x(rotation.value.x * time.delta_seconds());
         transform.rotate_local_y(rotation.value.y * time.delta_seconds());

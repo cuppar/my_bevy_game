@@ -8,9 +8,9 @@ use rand::Rng;
 // project internal
 use super::{
     movement::{Acceleration, Velocity},
-    rotation::Rotation,
+    rotation::RotationVelocity,
 };
-use crate::{bundles::movement::MovingObjectBundle, resources::asset_loader::SceneAssets};
+use crate::{bundles::moving_object::MovingObjectBundle, resources::asset_loader::SceneAssets};
 
 const VELOCITY_SCALAR: f32 = 5.0;
 const ACCELERATION_SCALAR: f32 = 1.0;
@@ -73,7 +73,7 @@ fn spawn_asteroid(
         MovingObjectBundle {
             velocity: Velocity::new(velocity),
             acceleration: Acceleration::new(acceleration),
-            rotation: Rotation::new(rotation),
+            rotation_velocity: RotationVelocity::new(rotation),
             model: SceneBundle {
                 scene: scene_assets.asteroid.clone(),
                 transform: Transform::from_translation(translation),

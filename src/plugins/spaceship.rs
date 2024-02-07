@@ -3,9 +3,9 @@ use bevy::prelude::*;
 // project internal
 use super::{
     movement::{Acceleration, Velocity},
-    rotation::Rotation,
+    rotation::RotationVelocity,
 };
-use crate::{bundles::movement::MovingObjectBundle, resources::asset_loader::SceneAssets};
+use crate::{bundles::moving_object::MovingObjectBundle, resources::asset_loader::SceneAssets};
 
 const STARTING_TRANSLATION: Vec3 = Vec3::new(0.0, 0.0, -20.0);
 const SPACESHIP_SPEED: f32 = 25.0;
@@ -36,7 +36,7 @@ fn spawn_spaceship(mut commands: Commands, scene_assets: Res<SceneAssets>) {
         MovingObjectBundle {
             velocity: Velocity::new(Vec3::ZERO),
             acceleration: Acceleration::new(Vec3::ZERO),
-            rotation: Rotation::new(Vec3::ZERO),
+            rotation_velocity: RotationVelocity::new(Vec3::ZERO),
             model: SceneBundle {
                 scene: scene_assets.spaceship.clone(),
                 transform: Transform::from_translation(STARTING_TRANSLATION),
@@ -48,7 +48,7 @@ fn spawn_spaceship(mut commands: Commands, scene_assets: Res<SceneAssets>) {
 }
 
 fn spaceship_movement_controls(
-    mut query: Query<(&Transform, &mut Velocity, &mut Rotation), With<Spaceship>>,
+    mut query: Query<(&Transform, &mut Velocity, &mut RotationVelocity), With<Spaceship>>,
     keyboard_input: Res<Input<KeyCode>>,
 ) {
     let (transform, mut velocity, mut rotation_component) = query.single_mut();
@@ -93,7 +93,7 @@ fn spaceship_weapon_controls(
             MovingObjectBundle {
                 velocity: Velocity::new(-transform.forward() * MISSILE_SPEED),
                 acceleration: Acceleration::new(Vec3::ZERO),
-                rotation: Rotation::new(Vec3::ZERO),
+                rotation_velocity: RotationVelocity::new(Vec3::ZERO),
                 model: SceneBundle {
                     scene: scene_assets.missiles.clone(),
                     transform: Transform::from_translation(

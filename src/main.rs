@@ -2,7 +2,10 @@ mod bundles;
 mod plugins;
 mod resources;
 
+// third party
 use bevy::prelude::*;
+
+// project internal
 use plugins::{
     // asteroids::AsteroidPlugin,
     camera::CameraPlugin,
