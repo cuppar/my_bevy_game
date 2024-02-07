@@ -42,14 +42,14 @@ jobs:
           zip darwin-x86_64.zip "./target/x86_64-apple-darwin/release/${APP_NAME}" "./target/x86_64-apple-darwin/release/dedicated_server"
           zip darwin-aarch64.zip "./target/aarch64-apple-darwin/release/${APP_NAME}" "./target/aarch64-apple-darwin/release/dedicated_server"
 
-          # mkdir -p "${APP_NAME}.app/Contents/MacOS"
-          # mkdir -p "${APP_NAME}.app/Contents/Resources"
-          # cp "./build/macOS/Info.plist" "${APP_NAME}.app/Contents/Info.plist"
-          # cp -a assets "${APP_NAME}.app/Contents/MacOS/"
-          # lipo "target/x86_64-apple-darwin/release/${APP_NAME}" \
-          #      "target/aarch64-apple-darwin/release/${APP_NAME}" \
-          #   -create -output "./build/macOS/${APP_NAME}.app/Contents/MacOS/${APP_NAME}"
-          # hdiutil create -fs HFS+ -volname "${APP_NAME}" -srcfolder "${APP_NAME}.app" ${APP_NAME}.dmg
+          mkdir -p "${APP_NAME}.app/Contents/MacOS"
+          mkdir -p "${APP_NAME}.app/Contents/Resources"
+          cp "./build/macOS/Info.plist" "${APP_NAME}.app/Contents/Info.plist"
+          cp -a assets "${APP_NAME}.app/Contents/MacOS/"
+          lipo "target/x86_64-apple-darwin/release/${APP_NAME}" \
+               "target/aarch64-apple-darwin/release/${APP_NAME}" \
+            -create -output "./build/macOS/${APP_NAME}.app/Contents/MacOS/${APP_NAME}"
+          hdiutil create -fs HFS+ -volname "${APP_NAME}" -srcfolder "${APP_NAME}.app" ${APP_NAME}.dmg
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
@@ -69,15 +69,15 @@ jobs:
       #     asset_name: ${APP_NAME}-darwin-amd64
       #     asset_content_type: application/octet-stream
 
-      # - name: Create Release
-      #   id: create_release
-      #   uses: actions/create-release@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     tag_name: ${{ github.ref }}
-      #     release_name: Release ${{ github.ref }}
-      #     body: |
-      #       This is the release of ${APP_NAME}.
-      #     draft: false
-      #     prerelease: false
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            This is the release of ${APP_NAME}.
+          draft: false
+          prerelease: false
