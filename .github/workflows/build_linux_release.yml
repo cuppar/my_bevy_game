@@ -1,0 +1,83 @@
+name: macOS
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: macOS-latest
+    
+    env:
+      APP_NAME: ethertia
+      
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+          components: rustfmt, rust-src, clippy
+
+      - name: Install Dependencies
+        run: |
+          rustup target add x86_64-apple-darwin
+          rustup target add aarch64-apple-darwin
+
+      - name: Build
+        run: |
+          cargo build --release --target x86_64-apple-darwin
+          cargo build --release --target aarch64-apple-darwin
+
+      - name: Zip Artifact
+        run: |
+          zip darwin-x86_64.zip "./target/x86_64-apple-darwin/release/${APP_NAME}" "./target/x86_64-apple-darwin/release/dedicated_server"
+          zip darwin-aarch64.zip "./target/aarch64-apple-darwin/release/${APP_NAME}" "./target/aarch64-apple-darwin/release/dedicated_server"
+
+          # mkdir -p "${APP_NAME}.app/Contents/MacOS"
+          # mkdir -p "${APP_NAME}.app/Contents/Resources"
+          # cp "./build/macOS/Info.plist" "${APP_NAME}.app/Contents/Info.plist"
+          # cp -a assets "${APP_NAME}.app/Contents/MacOS/"
+          # lipo "target/x86_64-apple-darwin/release/${APP_NAME}" \
+          #      "target/aarch64-apple-darwin/release/${APP_NAME}" \
+          #   -create -output "./build/macOS/${APP_NAME}.app/Contents/MacOS/${APP_NAME}"
+          # hdiutil create -fs HFS+ -volname "${APP_NAME}" -srcfolder "${APP_NAME}.app" ${APP_NAME}.dmg
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: artifacts
+          path: |
+            ./darwin-x86_64.zip
+            ./darwin-aarch64.zip
+
+      # - name: Upload Artifacts
+      #   uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #     asset_path: ./target/x86_64-apple-darwin/release/${APP_NAME}
+      #     asset_name: ${APP_NAME}-darwin-amd64
+      #     asset_content_type: application/octet-stream
+
+      # - name: Create Release
+      #   id: create_release
+      #   uses: actions/create-release@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     tag_name: ${{ github.ref }}
+      #     release_name: Release ${{ github.ref }}
+      #     body: |
+      #       This is the release of ${APP_NAME}.
+      #     draft: false
+      #     prerelease: false
