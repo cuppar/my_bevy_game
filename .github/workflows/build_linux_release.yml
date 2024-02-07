@@ -1,4 +1,4 @@
-name: macOS
+name: Linux
 
 on:
   push:
@@ -11,10 +11,10 @@ env:
 
 jobs:
   build:
-    runs-on: macOS-latest
+    runs-on: ubuntu-latest
     
     env:
-      APP_NAME: ethertia
+      APP_NAME: my_bevy_game
       
     steps:
       - name: Checkout Repository
@@ -29,35 +29,29 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          rustup target add x86_64-apple-darwin
-          rustup target add aarch64-apple-darwin
+          sudo apt-get update
+          sudo apt-get install g++ pkg-config libx11-dev libasound2-dev libudev-dev libxkbcommon-x11-0
+          sudo apt-get install libwayland-dev libxkbcommon-dev 
+        # sudo apt-get install -y mingw-w64 gcc-mingw-w64 g++-mingw-w64 zip   
+        # rustup target add x86_64-apple-darwin
+        # rustup target add x86_64-pc-windows-msvc  # Windows
+        # cargo install xwin
+        # xwin --accept-license splat --output ./.xwin
 
-      - name: Build
-        run: |
-          cargo build --release --target x86_64-apple-darwin
-          cargo build --release --target aarch64-apple-darwin
+      - name: Build for Linux
+        run: cargo build --release
 
-      - name: Zip Artifact
-        run: |
-          zip darwin-x86_64.zip "./target/x86_64-apple-darwin/release/${APP_NAME}" "./target/x86_64-apple-darwin/release/dedicated_server"
-          zip darwin-aarch64.zip "./target/aarch64-apple-darwin/release/${APP_NAME}" "./target/aarch64-apple-darwin/release/dedicated_server"
-
-          # mkdir -p "${APP_NAME}.app/Contents/MacOS"
-          # mkdir -p "${APP_NAME}.app/Contents/Resources"
-          # cp "./build/macOS/Info.plist" "${APP_NAME}.app/Contents/Info.plist"
-          # cp -a assets "${APP_NAME}.app/Contents/MacOS/"
-          # lipo "target/x86_64-apple-darwin/release/${APP_NAME}" \
-          #      "target/aarch64-apple-darwin/release/${APP_NAME}" \
-          #   -create -output "./build/macOS/${APP_NAME}.app/Contents/MacOS/${APP_NAME}"
-          # hdiutil create -fs HFS+ -volname "${APP_NAME}" -srcfolder "${APP_NAME}.app" ${APP_NAME}.dmg
+      # - name: Zip Artifact
+      #   run: zip linux-x86_64.zip ./target/release/${APP_NAME}
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: artifacts
+          name: linux-artifacts
           path: |
-            ./darwin-x86_64.zip
-            ./darwin-aarch64.zip
+            # ./linux-x86_64.zip
+            ./target/release/${APP_NAME}
+            ./target/release/dedicated_server
 
       # - name: Upload Artifacts
       #   uses: actions/upload-release-asset@v1

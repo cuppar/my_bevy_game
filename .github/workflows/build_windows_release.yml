@@ -1,0 +1,61 @@
+name: Windows
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    env:
+      APP_NAME: my_bevy_game
+      
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+          components: rustfmt, rust-src, clippy
+
+      - name: Install Dependencies
+        run: |
+          rustup target add x86_64-pc-windows-msvc  # Windows
+
+      - name: Build for Windows
+        run: |
+          cargo build --release --target x86_64-pc-windows-msvc
+          
+      - name: Zip Windows Artifact
+        run: Compress-Archive -Path ./target/x86_64-pc-windows-msvc/release/*.exe -Destination windows-x86_64.zip
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-artifacts
+          path: |
+            ./windows-x86_64.zip
+            ./target/x86_64-pc-windows-msvc/release/${APP_NAME}.exe
+
+      # - name: Create Release
+      #   id: create_release
+      #   uses: actions/create-release@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     tag_name: ${{ github.ref }}
+      #     release_name: Release ${{ github.ref }}
+      #     body: |
+      #       This is the release of ${APP_NAME}.
+      #     draft: false
+      #     prerelease: true
+
