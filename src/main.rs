@@ -1,4 +1,5 @@
 mod bundles;
+mod components;
 mod plugins;
 mod resources;
 
@@ -7,11 +8,8 @@ use bevy::prelude::*;
 
 // project internal
 use plugins::{
-    // asteroids::AsteroidPlugin,
-    camera::CameraPlugin,
-    debug::DebugPlugin,
-    movement::MovementPlugin,
-    rotation::RotationPlugin,
+    asteroids::AsteroidPlugin, camera::CameraPlugin, collision_detection::CollisionDetectionPlugin,
+    debug::DebugPlugin, despawn::DespawnPlugin, movement::MovementPlugin, rotation::RotationPlugin,
     spaceship::SpaceshipPlugin,
 };
 use resources::asset_loader::AssetLoaderPlugin;
@@ -28,10 +26,12 @@ fn main() {
         // User configured plugins.
         .add_plugins(AssetLoaderPlugin)
         .add_plugins(SpaceshipPlugin)
-        // .add_plugins(AsteroidPlugin)
+        .add_plugins(AsteroidPlugin)
         .add_plugins(MovementPlugin)
         .add_plugins(RotationPlugin)
         .add_plugins(CameraPlugin)
+        .add_plugins(CollisionDetectionPlugin)
+        .add_plugins(DespawnPlugin)
         .add_plugins(DebugPlugin)
         .run();
 }
