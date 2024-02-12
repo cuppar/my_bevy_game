@@ -10,7 +10,7 @@ use bevy::prelude::*;
 use plugins::{
     asteroids::AsteroidPlugin, camera::CameraPlugin, collision_detection::CollisionDetectionPlugin,
     debug::DebugPlugin, despawn::DespawnPlugin, movement::MovementPlugin, rotation::RotationPlugin,
-    spaceship::SpaceshipPlugin,
+    schedule::SchedulePlugin, spaceship::SpaceshipPlugin,
 };
 use resources::asset_loader::AssetLoaderPlugin;
 
@@ -32,6 +32,7 @@ fn main() {
         .add_plugins(CameraPlugin)
         .add_plugins(CollisionDetectionPlugin)
         .add_plugins(DespawnPlugin)
-        .add_plugins(DebugPlugin)
+        .add_plugins(SchedulePlugin)
+        // .add_plugins(DebugPlugin)
         .run();
 }

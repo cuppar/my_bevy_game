@@ -1,15 +1,17 @@
 use bevy::prelude::*;
 
-// use crate::components::name::Name;
-
-use super::collision_detection::Collider;
+use super::{collision_detection::Collider, schedule::InGameSet};
 
 pub struct DebugPlugin;
 
 impl Plugin for DebugPlugin {
     fn build(&self, app: &mut App) {
-        // app.add_systems(Update, (print_position, print_collisions));
-        app.add_systems(Update, print_collisions);
+        app.add_systems(
+            Update,
+            (print_position, print_collisions)
+                .chain()
+                .after(InGameSet::EntityUpdates),
+        );
     }
 }
 

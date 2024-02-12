@@ -10,6 +10,7 @@ use super::{
     collision_detection::Collider,
     movement::{Acceleration, Velocity},
     rotation::RotationVelocity,
+    schedule::InGameSet,
 };
 use crate::{bundles::moving_object::MovingObjectBundle, resources::asset_loader::SceneAssets};
 
@@ -36,7 +37,7 @@ impl Plugin for AsteroidPlugin {
         app.insert_resource(SpawnTimer {
             timer: Timer::from_seconds(SPAWN_TIME_SECONDS, TimerMode::Repeating),
         })
-        .add_systems(Update, (spawn_asteroid, handle_asteroid_collisions));
+        .add_systems(Update, spawn_asteroid.in_set(InGameSet::EntityUpdates));
     }
 }
 
@@ -86,18 +87,4 @@ fn spawn_asteroid(
         Name::new("Asteroid"),
         Asteroid,
     ));
-}
-
-fn handle_asteroid_collisions(
-    mut commands: Commands,
-    query: Query<(Entity, &Collider), With<Asteroid>>,
-) {
-    for (entity, collider) in query.iter() {
-        for &collided_entity in collider.colliding_entities.iter() {
-            if query.get(collided_entity).is_ok() {
-                continue;
-            }
-            commands.entity(entity).despawn_recursive();
-        }
-    }
 }

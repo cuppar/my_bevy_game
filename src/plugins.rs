@@ -5,4 +5,5 @@ pub mod debug;
 pub mod despawn;
 pub mod movement;
 pub mod rotation;
+pub mod schedule;
 pub mod spaceship;

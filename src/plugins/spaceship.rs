@@ -5,6 +5,7 @@ use super::{
     collision_detection::Collider,
     movement::{Acceleration, Velocity},
     rotation::RotationVelocity,
+    schedule::InGameSet,
 };
 use crate::{bundles::moving_object::MovingObjectBundle, resources::asset_loader::SceneAssets};
 
@@ -24,13 +25,22 @@ pub struct Spaceship;
 #[derive(Component, Debug)]
 pub struct SpaceshipMissile;
 
+#[derive(Component, Debug)]
+pub struct SpaceshipShield;
+
 pub struct SpaceshipPlugin;
 
 impl Plugin for SpaceshipPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(PostStartup, spawn_spaceship).add_systems(
             Update,
-            (spaceship_movement_controls, spaceship_weapon_controls),
+            (
+                spaceship_movement_controls,
+                spaceship_weapon_controls,
+                spaceship_shield_controls,
+            )
+                .chain()
+                .in_set(InGameSet::UserInput),
         );
     }
 }
@@ -57,7 +67,9 @@ fn spaceship_movement_controls(
     mut query: Query<(&Transform, &mut Velocity, &mut RotationVelocity), With<Spaceship>>,
     keyboard_input: Res<Input<KeyCode>>,
 ) {
-    let (transform, mut velocity, mut rotation_component) = query.single_mut();
+    let Ok((transform, mut velocity, mut rotation_component)) = query.get_single_mut() else {
+        return;
+    };
     let mut rotation = 0.0;
     let mut roll = 0.0;
     let mut movement = 0.0;
@@ -93,7 +105,9 @@ fn spaceship_weapon_controls(
     keyboard_input: Res<Input<KeyCode>>,
     scene_assets: Res<SceneAssets>,
 ) {
-    let transform = query.single();
+    let Ok(transform) = query.get_single() else {
+        return;
+    };
     if keyboard_input.pressed(KeyCode::Space) {
         commands.spawn((
             MovingObjectBundle {
@@ -115,38 +129,15 @@ fn spaceship_weapon_controls(
     }
 }
 
-// backup for tutorial
-// fn spaceship_movement_controls(
-//     mut query: Query<(&mut Transform, &mut Velocity), With<Spaceship>>,
-//     keyboard_input: Res<Input<KeyCode>>,
-//     time: Res<Time>,
-// ) {
-//     let (mut transform, mut velocity) = query.single_mut();
-//     let mut rotation = 0.0;
-//     let mut roll = 0.0;
-//     let mut movement = 0.0;
-
-//     // forward and backward
-//     if keyboard_input.pressed(KeyCode::W) {
-//         movement = SPACESHIP_SPEED;
-//     } else if keyboard_input.pressed(KeyCode::S) {
-//         movement = -SPACESHIP_SPEED;
-//     }
-//     velocity.value = -transform.forward() * movement;
-
-//     // turn left and right
-//     if keyboard_input.pressed(KeyCode::A) {
-//         rotation = SPACESHIP_ROTATION_SPEED * time.delta_seconds();
-//     } else if keyboard_input.pressed(KeyCode::D) {
-//         rotation = -SPACESHIP_ROTATION_SPEED * time.delta_seconds();
-//     }
-//     transform.rotate_y(rotation);
-
-//     // roll
-//     if keyboard_input.pressed(KeyCode::E) {
-//         roll = SPACESHIP_ROLL_SPEED * time.delta_seconds();
-//     } else if keyboard_input.pressed(KeyCode::Q) {
-//         roll = -SPACESHIP_ROLL_SPEED * time.delta_seconds();
-//     }
-//     transform.rotate_local_z(roll);
-// }
+fn spaceship_shield_controls(
+    mut commands: Commands,
+    query: Query<Entity, With<Spaceship>>,
+    keyboard_input: Res<Input<KeyCode>>,
+) {
+    let Ok(spaceship) = query.get_single() else {
+        return;
+    };
+    if keyboard_input.pressed(KeyCode::Tab) {
+        commands.entity(spaceship).insert(SpaceshipShield);
+    }
+}
