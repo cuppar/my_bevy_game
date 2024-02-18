@@ -1,7 +1,9 @@
 mod bundles;
 mod components;
+mod health;
 mod plugins;
 mod resources;
+mod state;
 
 // third party
 use bevy::prelude::*;
@@ -13,6 +15,7 @@ use plugins::{
     schedule::SchedulePlugin, spaceship::SpaceshipPlugin,
 };
 use resources::asset_loader::AssetLoaderPlugin;
+use state::StatePlugin;
 
 fn main() {
     App::new()
@@ -33,6 +36,7 @@ fn main() {
         .add_plugins(CollisionDetectionPlugin)
         .add_plugins(DespawnPlugin)
         .add_plugins(SchedulePlugin)
+        .add_plugins(StatePlugin)
         // .add_plugins(DebugPlugin)
         .run();
 }

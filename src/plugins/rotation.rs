@@ -1,5 +1,7 @@
 use bevy::prelude::*;
 
+use super::schedule::InGameSet;
+
 #[derive(Component, Debug)]
 pub struct RotationVelocity {
     pub value: Vec3,
@@ -15,7 +17,7 @@ pub struct RotationPlugin;
 
 impl Plugin for RotationPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, update_rotation);
+        app.add_systems(Update, update_rotation.in_set(InGameSet::EntityUpdates));
     }
 }
 
